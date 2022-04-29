@@ -1,0 +1,18 @@
+---
+# See https://github.com/discourse/discourse_docker/blob/master/templates/postgres.13.template.yml#L204
+- set_fact:
+    password: "confluence"
+
+- name: Set up required confluence DB schema
+  shell: "{{ item }}"
+  become: yes
+  with_items:
+    - su postgres -c 'createdb confluence' || true
+    - su postgres -c 'psql confluence -c "create user confluence;"' || true
+    - su postgres -c "psql confluence -c \"ALTER USER confluence WITH PASSWORD 'confluence';\"" || true
+    - su postgres -c 'psql confluence -c "grant all privileges on database confluence to confluence;"' || true
+    - su postgres -c 'psql confluence -c "alter schema public owner to confluence;"'
+    - su postgres -c 'psql template1 -c "create extension if not exists hstore;"'
+    - su postgres -c 'psql template1 -c "create extension if not exists pg_trgm;"'
+    - su postgres -c 'psql confluence -c "create extension if not exists hstore;"'
+    - su postgres -c 'psql confluence -c "create extension if not exists pg_trgm;"'

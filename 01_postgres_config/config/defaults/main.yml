@@ -1,0 +1,4 @@
+---
+discourse_db_name: confluence
+discourse_db_user: confluence
+discourse_db_password: "confluence"
